@@ -12,4 +12,5 @@ const CreationSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Creation", CreationSchema);
+const Creation = mongoose.model("Creation", CreationSchema);
+module.exports = Creation;
