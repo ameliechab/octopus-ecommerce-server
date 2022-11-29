@@ -4,7 +4,7 @@ const ArtistSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, unique: true },
     description: { type: String, required: true },
-    img: { type: String, required: true },
+    picture: { type: String, required: true },
     creations: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -15,4 +15,6 @@ const ArtistSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Artist", ArtistSchema);
+const Artist = mongoose.model("Artist", ArtistSchema);
+
+module.exports = Artist;
