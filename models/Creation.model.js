@@ -2,7 +2,11 @@ const mongoose = require("mongoose");
 
 const CreationSchema = new mongoose.Schema(
   {
-    artistId: { type: String, required: true },
+    artistId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Artist",
+      required: true,
+    },
     title: { type: String, required: true, unique: true },
     description: { type: String, required: true },
     img: { type: String, required: true },
