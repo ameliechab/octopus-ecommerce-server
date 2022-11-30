@@ -16,7 +16,7 @@ router.get("/private", protectRoute, (req, res, next) => {
 
 //////////////////////////////ARTISTS/////////////////////////////
 
-router.get("/artists", protectRoute, async (req, res, next) => {
+router.get("/artists", async (req, res, next) => {
   const allArtists = await Artist.find();
   res.status(200).json(allArtists);
 });
