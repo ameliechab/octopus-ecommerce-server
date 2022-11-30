@@ -191,4 +191,21 @@ router.patch("/order/:orderId/:quantityId", async (req, res, next) => {
 // ROUTES ARTISTES
 // a faire plus tard
 
+router.post("/artists", uploader.single("picture"), async (req, res, next) => {
+  const { name, description } = req.body;
+
+  let picture;
+  if (req.file) {
+    picture = req.file.path;
+  }
+
+  const artist = await Artist.create({
+    name,
+    description,
+    picture,
+  });
+
+  res.status(201).json(artist);
+});
+
 module.exports = router;
