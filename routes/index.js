@@ -78,14 +78,9 @@ router.post(
   async (req, res, next) => {
     try {
       console.log(req.params.id);
-      // const foundCreation = await Creation.findById(req.params.id)
-
       const order = await Order.findOne({
         userId: req.currentUser.id,
         date: { $exists: false },
-        // creations: {
-        //   $elemMatch: { productId: req.params.id },
-        // },
       });
       if (order) {
         let updated = false;
@@ -119,37 +114,6 @@ router.post(
     } catch (error) {
       console.log(error);
     }
-    // if (orderWithoutDateOfCurrentUser) {
-    //   let newProductId = req.body;
-    //     await Order.findByIdAndUpdate(req.params.id, {
-    //       $push: { creations: req.body },
-    //     });
-    //     res.json(newProductId);
-    // }
-    // else ( !orderWithoutDateOfCurrentUser) {
-    //   try {
-    //     //Create order//
-    //     const { userId, creations, amount, date } = req.body;
-    //     const newOrder = await Order.create({
-    //       userId,
-    //       creations,
-    //       amount,
-    //       date,
-    //     });
-
-    //     res.status(201).json(newOrder);
-
-    //     //Push creation in order created//
-    //     let newProductId = req.body;
-    //     await Order.findByIdAndUpdate(req.params.id, {
-    //       $push: { creations: req.body },
-    //     });
-    //     res.json(newProductId);
-    //   } catch (error) {
-    //     next(error);
-    //   }
-
-    // }
   }
 );
 
@@ -189,24 +153,120 @@ router.patch("/orderCart/:id", protectRoute, async (req, res, next) => {
   }
 });
 
-// Update quantity
+// DELETE THE CART ORDER
 
-router.patch("/order/:orderId/:quantityId", async (req, res, next) => {
-  const { orderId, quantityId } = req.params;
-  console.log(req.body);
+router.delete("/orderCart/delete", protectRoute, async (req, res, next) => {
   try {
-    const updatedOrder = await Order.findById(orderId);
-    for (const quantity of updatedOrder.creations) {
-      if (quantity.id === quantityId) {
-        quantity.quantity = req.body.quantity;
-      }
-    }
-    await updatedOrder.save();
-    res.status(201).json(updatedOrder);
+   let orderDeleted = await Order.findOneAndDelete({
+      userId: req.currentUser.id,
+      date: { $exists: false },
+    });
+    res.status(204).json(orderDeleted);
   } catch (error) {
     next(error);
   }
 });
+
+
+// Update quantity
+
+// router.patch("/order/:orderId/:quantityId", async (req, res, next) => {
+//   const { orderId, quantityId } = req.params;
+//   console.log(req.body);
+//   try {
+//     const updatedOrder = await Order.findById(orderId);
+//     for (const quantity of updatedOrder.creations) {
+//       if (quantity.id === quantityId) {
+//         quantity.quantity = req.body.quantity;
+//       }
+//     }
+//     await updatedOrder.save();
+//     res.json(updatedOrder);
+//   } catch (error) {
+//     next(error);
+//   }
+// });
+
+// Add an amount of creation in cart
+
+router.patch("/orderCart/increment/:creationId", protectRoute, async (req, res, next) => {
+  try {
+    console.log(req.params.creationId);
+    const order = await Order.findOne({
+      userId: req.currentUser.id,
+      date: { $exists: false },
+    });
+    if (order) {
+      let updated = false;
+      order.creations.forEach((creation) => {
+        if (creation.productId.toString() === req.params.creationId) {
+          creation.quantity++;
+          updated = true;
+        }
+      });
+      await order.save();
+    } 
+    res.status(201).json(order);
+  } catch (error) {
+    console.log(error);
+  }
+}
+)
+
+// Remove an amount of creation in cart
+
+router.patch("/orderCart/decrement/:creationId", protectRoute, async (req, res, next) => {
+  try {
+    console.log(req.params.creationId);
+    const order = await Order.findOne({
+      userId: req.currentUser.id,
+      date: { $exists: false },
+    });
+    if (order) {
+      let updated = false;
+      order.creations.forEach((creation) => {
+        if (creation.productId.toString() === req.params.creationId) {
+          if (creation.quantity <= 0) {
+            creation.quantity--;
+            updated = true;
+          }
+          
+        }
+      });
+      await order.save();
+    } 
+    res.status(201).json(order);
+  } catch (error) {
+    console.log(error);
+  }
+}
+)
+
+// Buy a cart 
+
+router.patch("/orderCart/buy", protectRoute, async (req, res, next) => {
+  try {
+    console.log(req.params.creationId);
+    const order = await Order.findOne({
+      userId: req.currentUser.id,
+      date: { $exists: false },
+    });
+    if (order) {
+      let updated = false;
+      order.creations.forEach((creation) => {
+        if (creation.productId.toString() === req.params.creationId) {
+          date: Date.now;
+          updated = true;
+        }
+      });
+      await order.save();
+    } 
+    res.status(201).json(order);
+  } catch (error) {
+    console.log(error);
+  }
+}
+)
 
 //////////////////////////////PROFILE/////////////////////////////
 
