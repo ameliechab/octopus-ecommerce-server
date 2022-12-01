@@ -44,26 +44,31 @@ router.post("/order", async (req, res) => {
   res.status(201).json(newOrder);
 });
 
-// Get an order if order exists
+// Get an orderCart if order without date exists
 
-router.get("/order", async (req, res, next) => {
-  res.status(200).json(await Order.find());
+router.get("/orderCart", protectRoute, async (req, res, next) => {
+  const orderCart = await Order.findOne({
+    userId: req.currentUser.id,
+    date: { $exists: false },
+  });
+  console.log(orderCart);
+  res.status(200).json(orderCart);
 });
 
 // Add creation to order
 
-router.post("/order/:id/productId/add", async (req, res, next) => {
-  try {
-    console.log(req.body);
-    let newProductId = req.body;
-    await Order.findByIdAndUpdate(req.params.id, {
-      $push: { creations: req.body },
-    });
-    res.json(newProductId);
-  } catch (error) {
-    next(error);
-  }
-});
+// router.post("/order/:id/productId/add", async (req, res, next) => {
+//   try {
+//     console.log(req.body);
+//     let newProductId = req.body;
+//     await Order.findByIdAndUpdate(req.params.id, {
+//       $push: { creations: req.body },
+//     });
+//     res.json(newProductId);
+//   } catch (error) {
+//     next(error);
+//   }
+// });
 
 //TEST/////////////////////
 
@@ -75,16 +80,13 @@ router.post(
       console.log(req.params.id);
       // const foundCreation = await Creation.findById(req.params.id)
 
-      const order = await Order.findOne(
-        {
-          userId: req.currentUser.id,
-          date: { $exists: false },
-          // creations: {
-          //   $elemMatch: { productId: req.params.id },
-          // },
-        },
-        {}
-      );
+      const order = await Order.findOne({
+        userId: req.currentUser.id,
+        date: { $exists: false },
+        // creations: {
+        //   $elemMatch: { productId: req.params.id },
+        // },
+      });
       if (order) {
         let updated = false;
         order.creations.forEach((creation) => {
