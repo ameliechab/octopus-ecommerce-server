@@ -24,11 +24,22 @@ router.get("/artists", async (req, res, next) => {
 //////////////////////////////CREATIONS/////////////////////////////
 
 router.get("/creations", async (req, res, next) => {
-  const allCreations = await Creation.find();
-  res.status(200).json(allCreations);
+  const allOrders = await Creation.find();
+  res.status(200).json(allOrders);
 });
 
 //////////////////////////////ORDER/////////////////////////////
+
+router.get("/orders", protectRoute, async (req, res, next) => {
+  const allCreations = await Order.find(
+    {
+      userId: req.currentUser.id,
+      date: { $exists: true },
+    },
+  );
+  res.status(200).json(allCreations);
+});
+
 
 // Create an order if !order
 
@@ -244,24 +255,16 @@ router.patch("/orderCart/decrement/:creationId", protectRoute, async (req, res, 
 
 // Buy a cart 
 
-router.patch("/orderCart/buy", protectRoute, async (req, res, next) => {
+router.put("/orderCart/buy", protectRoute, async (req, res, next) => {
+  console.log("hello")
   try {
-    console.log(req.params.creationId);
-    const order = await Order.findOne({
-      userId: req.currentUser.id,
-      date: { $exists: false },
-    });
-    if (order) {
-      let updated = false;
-      order.creations.forEach((creation) => {
-        if (creation.productId.toString() === req.params.creationId) {
-          date: Date.now;
-          updated = true;
-        }
-      });
-      await order.save();
-    } 
-    res.status(201).json(order);
+    const findOrder = await Order.findOne({
+      userId :req.currentUser.id,
+      date: { $exists: false }
+    })
+    findOrder.date = new Date()
+    await findOrder.save()
+    res.status(202).json(findOrder);
   } catch (error) {
     console.log(error);
   }
