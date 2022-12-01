@@ -117,7 +117,7 @@ router.post(
   }
 );
 
-// Delete  order
+// Delete one creation in order
 
 router.patch("/orderCart/:id", protectRoute, async (req, res, next) => {
   const { id } = req.params;
@@ -147,7 +147,7 @@ router.patch("/orderCart/:id", protectRoute, async (req, res, next) => {
     // // updatedOrder.creations = creations;
     // const x = await Order.findByIdAndUpdate(updatedOrder.id, { creations });
 
-    res.status(204).json(updatedOrder);
+    res.status(202).json(updatedOrder);
   } catch (error) {
     next(error);
   }
