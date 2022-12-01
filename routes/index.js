@@ -278,10 +278,9 @@ router.put("/orderCart/buy", protectRoute, async (req, res, next) => {
 
 //////////////////////////////ARTISTES/////////////////////////////
 
-// ROUTES ARTISTES
-// a faire plus tard
+// ROUTE ARTISTE FORM
 
-router.post("/artists", uploader.single("picture"), async (req, res, next) => {
+router.post("/artists/form", uploader.single("picture"), async (req, res, next) => {
   const { name, description } = req.body;
 
   let picture;
@@ -293,6 +292,28 @@ router.post("/artists", uploader.single("picture"), async (req, res, next) => {
     name,
     description,
     picture,
+  });
+
+  res.status(201).json(artist);
+});
+
+// ROUTE CREATION FORM
+
+router.post("/creations/form", uploader.single("picture"), async (req, res, next) => {
+  const { name, description } = req.body;
+
+  let img;
+  if (req.file) {
+    img = req.file.path;
+  }
+
+  const creation = await Creation.create({
+    artistId,
+    title,
+    description,
+    img,
+    categories,
+    price
   });
 
   res.status(201).json(artist);
