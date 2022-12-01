@@ -119,10 +119,35 @@ router.post(
 
 // Delete  order
 
-router.delete("/order/:id", async (req, res, next) => {
+router.patch("/orderCart/:id", protectRoute, async (req, res, next) => {
+  const { id } = req.params;
+  console.log(id);
   try {
-    await Order.findByIdAndDelete(req.params.id);
-    res.status(204).json({ message: "Deleted!" + req.params.id });
+    const updatedOrder = await Order.findOneAndUpdate(
+      {
+        userId: req.currentUser.id,
+        date: { $exists: false },
+      },
+      {
+        $pull: { creations: { productId: id } },
+      },
+      {
+        new: true,
+      }
+    );
+
+    // const creations = [...updatedOrder.creations];
+    // for (let i = 0; i < creations.length; i++) {
+    //   if (creations[i].productId.toString() === id) {
+    //     // let indexOfCreation = updatedOrder.creations.indexOf(creationAdded);
+    //     creations.splice(i, 1);
+    //   }
+    // }
+
+    // // updatedOrder.creations = creations;
+    // const x = await Order.findByIdAndUpdate(updatedOrder.id, { creations });
+
+    res.status(204).json(updatedOrder);
   } catch (error) {
     next(error);
   }
