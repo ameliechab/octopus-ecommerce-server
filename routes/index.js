@@ -31,15 +31,12 @@ router.get("/creations", async (req, res, next) => {
 //////////////////////////////ORDER/////////////////////////////
 
 router.get("/orders", protectRoute, async (req, res, next) => {
-  const allCreations = await Order.find(
-    {
-      userId: req.currentUser.id,
-      date: { $exists: true },
-    },
-  );
+  const allCreations = await Order.find({
+    userId: req.currentUser.id,
+    date: { $exists: true },
+  });
   res.status(200).json(allCreations);
 });
-
 
 // Create an order if !order
 
@@ -168,7 +165,7 @@ router.patch("/orderCart/:id", protectRoute, async (req, res, next) => {
 
 router.delete("/orderCart/delete", protectRoute, async (req, res, next) => {
   try {
-   let orderDeleted = await Order.findOneAndDelete({
+    let orderDeleted = await Order.findOneAndDelete({
       userId: req.currentUser.id,
       date: { $exists: false },
     });
@@ -177,7 +174,6 @@ router.delete("/orderCart/delete", protectRoute, async (req, res, next) => {
     next(error);
   }
 });
-
 
 // Update quantity
 
@@ -200,75 +196,83 @@ router.delete("/orderCart/delete", protectRoute, async (req, res, next) => {
 
 // Add an amount of creation in cart
 
-router.patch("/orderCart/increment/:creationId", protectRoute, async (req, res, next) => {
-  try {
-    console.log(req.params.creationId);
-    const order = await Order.findOne({
-      userId: req.currentUser.id,
-      date: { $exists: false },
-    });
-    if (order) {
-      let updated = false;
-      order.creations.forEach((creation) => {
-        if (creation.productId.toString() === req.params.creationId) {
-          creation.quantity++;
-          updated = true;
-        }
+router.patch(
+  "/orderCart/increment/:creationId",
+  protectRoute,
+  async (req, res, next) => {
+    try {
+      console.log(req.params.creationId);
+      const order = await Order.findOne({
+        userId: req.currentUser.id,
+        date: { $exists: false },
       });
-      await order.save();
-    } 
-    res.status(201).json(order);
-  } catch (error) {
-    console.log(error);
+      if (order) {
+        let updated = false;
+        order.creations.forEach((creation) => {
+          if (creation.productId.toString() === req.params.creationId) {
+            creation.quantity++;
+            updated = true;
+          }
+        });
+        await order.save();
+      }
+      res.status(201).json(order);
+    } catch (error) {
+      console.log(error);
+    }
   }
-}
-)
+);
 
 // Remove an amount of creation in cart
 
-router.patch("/orderCart/decrement/:creationId", protectRoute, async (req, res, next) => {
+router.patch(
+  "/orderCart/decrement/:creationId",
+  protectRoute,
+  async (req, res, next) => {
+    try {
+      console.log(req.params.creationId);
+      const order = await Order.findOne({
+        userId: req.currentUser.id,
+        date: { $exists: false },
+      });
+      if (order) {
+        let updated = false;
+        order.creations.forEach((creation) => {
+          if (creation.productId.toString() === req.params.creationId) {
+            if (creation.quantity > 0) {
+              creation.quantity--;
+              updated = true;
+            }
+            if (creation.quantity === 0) {
+              order.creations.splice(order.creations.indexOf(creation), 1);
+            }
+          }
+        });
+        await order.save();
+      }
+      res.status(201).json(order);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);
+
+// Buy a cart
+
+router.put("/orderCart/buy", protectRoute, async (req, res, next) => {
+  console.log("hello");
   try {
-    console.log(req.params.creationId);
-    const order = await Order.findOne({
+    const findOrder = await Order.findOne({
       userId: req.currentUser.id,
       date: { $exists: false },
     });
-    if (order) {
-      let updated = false;
-      order.creations.forEach((creation) => {
-        if (creation.productId.toString() === req.params.creationId) {
-          if (creation.quantity > 0) {
-            creation.quantity--;
-            updated = true;
-          }
-        }
-      });
-      await order.save();
-    } 
-    res.status(201).json(order);
-  } catch (error) {
-    console.log(error);
-  }
-}
-)
-
-// Buy a cart 
-
-router.put("/orderCart/buy", protectRoute, async (req, res, next) => {
-  console.log("hello")
-  try {
-    const findOrder = await Order.findOne({
-      userId :req.currentUser.id,
-      date: { $exists: false }
-    })
-    findOrder.date = new Date()
-    await findOrder.save()
+    findOrder.date = new Date();
+    await findOrder.save();
     res.status(202).json(findOrder);
   } catch (error) {
     console.log(error);
   }
-}
-)
+});
 
 //////////////////////////////PROFILE/////////////////////////////
 
@@ -279,43 +283,51 @@ router.put("/orderCart/buy", protectRoute, async (req, res, next) => {
 
 // ROUTE ARTISTE FORM
 
-router.post("/artists/form", uploader.single("picture"), async (req, res, next) => {
-  const { name, description } = req.body;
+router.post(
+  "/artists/form",
+  uploader.single("picture"),
+  async (req, res, next) => {
+    const { name, description } = req.body;
 
-  let picture;
-  if (req.file) {
-    picture = req.file.path;
+    let picture;
+    if (req.file) {
+      picture = req.file.path;
+    }
+
+    const artist = await Artist.create({
+      name,
+      description,
+      picture,
+    });
+
+    res.status(201).json(artist);
   }
-
-  const artist = await Artist.create({
-    name,
-    description,
-    picture,
-  });
-
-  res.status(201).json(artist);
-});
+);
 
 // ROUTE CREATION FORM
 
-router.post("/creations/form", uploader.single("picture"), async (req, res, next) => {
-  const { name, description } = req.body;
+router.post(
+  "/creations/form",
+  uploader.single("picture"),
+  async (req, res, next) => {
+    const { name, description } = req.body;
 
-  let img;
-  if (req.file) {
-    img = req.file.path;
+    let img;
+    if (req.file) {
+      img = req.file.path;
+    }
+
+    const creation = await Creation.create({
+      artistId,
+      title,
+      description,
+      img,
+      categories,
+      price,
+    });
+
+    res.status(201).json(artist);
   }
-
-  const creation = await Creation.create({
-    artistId,
-    title,
-    description,
-    img,
-    categories,
-    price
-  });
-
-  res.status(201).json(artist);
-});
+);
 
 module.exports = router;
