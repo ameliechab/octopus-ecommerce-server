@@ -237,11 +237,10 @@ router.patch("/orderCart/decrement/:creationId", protectRoute, async (req, res, 
       let updated = false;
       order.creations.forEach((creation) => {
         if (creation.productId.toString() === req.params.creationId) {
-          if (creation.quantity <= 0) {
+          if (creation.quantity > 0) {
             creation.quantity--;
             updated = true;
           }
-          
         }
       });
       await order.save();
