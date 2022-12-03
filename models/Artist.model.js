@@ -5,12 +5,11 @@ const ArtistSchema = new mongoose.Schema(
     name: { type: String, required: true, unique: true },
     description: { type: String, required: true },
     picture: { type: String, required: true },
-    creations: [
+    user: 
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Creation",
+        ref: "User",
       },
-    ],
   },
   { timestamps: true }
 );

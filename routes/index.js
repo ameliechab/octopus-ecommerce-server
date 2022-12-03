@@ -285,19 +285,31 @@ router.put("/orderCart/buy", protectRoute, async (req, res, next) => {
 
 router.post(
   "/artists/form",
-  uploader.single("picture"),
+  uploader.single("picture"), protectRoute, 
   async (req, res, next) => {
-    const { name, description } = req.body;
-
+    const { name, description, user } = req.body;
     let picture;
     if (req.file) {
       picture = req.file.path;
     }
 
+
+    const artistExists = await Artist.findOne({
+      user: req.currentUser.id,
+    })
+
+    if (artistExists) {
+      console.log("One artist already exists")
+      return res.status(401).json({})
+    }
+
+
+   
     const artist = await Artist.create({
       name,
       description,
       picture,
+      user: req.currentUser.id,
     });
 
     res.status(201).json(artist);
@@ -308,25 +320,32 @@ router.post(
 
 router.post(
   "/creations/form",
-  uploader.single("picture"),
+  uploader.single("img"), protectRoute,
   async (req, res, next) => {
-    const { name, description } = req.body;
+    const { title, description, categories, price, user } = req.body;
 
     let img;
     if (req.file) {
       img = req.file.path;
     }
 
+    const artistLinked = await Artist.findOne({
+      user: req.currentUser.id,
+    })
+
+    console.log(artistLinked)
+
     const creation = await Creation.create({
-      artistId,
       title,
       description,
       img,
       categories,
       price,
+      user: req.currentUser.id,
+      artistId: artistLinked._id
     });
 
-    res.status(201).json(artist);
+    res.status(201).json(creation);
   }
 );
 
