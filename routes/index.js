@@ -335,6 +335,12 @@ router.post(
 
     console.log(artistLinked)
 
+    if (!artistLinked) {
+      console.log("Create artist page first")
+      return res.status(401).json({})
+    }
+
+    if (artistLinked) {
     const creation = await Creation.create({
       title,
       description,
@@ -343,9 +349,11 @@ router.post(
       price,
       user: req.currentUser.id,
       artistId: artistLinked._id
-    });
-
+    })
     res.status(201).json(creation);
+  }
+
+
   }
 );
 
