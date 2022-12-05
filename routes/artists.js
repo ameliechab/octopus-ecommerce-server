@@ -37,36 +37,36 @@ router.get("/myartist", protectRoute, async (req, res, next) => {
 // If there's no artist page yet  : HTTP 201 Created success status response code indicates that the request has succeeded and has led to the creation of a resource
 
 router.post(
-    "/artists/form",
-    uploader.single("picture"), protectRoute, 
-    async (req, res, next) => {
-      const { name, description, user } = req.body;
-      let picture;
-      if (req.file) {
-        picture = req.file.path;
-      }
-  
-      const artistExists = await Artist.findOne({
-        user: req.currentUser.id,
-      })
-  
-      if (artistExists) {
-        console.log("One artist already exists")
-        return res.status(401).json({})
-      }
-  
-      const artist = await Artist.create({
-        name,
-        description,
-        picture,
-        user: req.currentUser.id,
-      });
-  
-      res.status(201).json(artist);
+  "/artists/form",
+  uploader.single("picture"),
+  protectRoute,
+  async (req, res, next) => {
+    const { name, description, user } = req.body;
+    let picture;
+    if (req.file) {
+      picture = req.file.path;
     }
-  );
-  
-  
+
+    const artistExists = await Artist.findOne({
+      user: req.currentUser.id,
+    });
+
+    if (artistExists) {
+      console.log("One artist already exists");
+      return res.status(401).json({});
+    }
+
+    const artist = await Artist.create({
+      name,
+      description,
+      picture,
+      user: req.currentUser.id,
+    });
+
+    res.status(201).json(artist);
+  }
+);
+
 // Update an artist
 
 router.patch(
@@ -99,5 +99,18 @@ router.patch(
     res.status(201).json(myNewArtist);
   }
 );
+
+// Delete an artist
+
+router.delete("/myArtist/delete", protectRoute, async (req, res, next) => {
+  try {
+    let artistDeleted = await Artist.findOneAndDelete({
+      user: req.currentUser.id,
+    });
+    res.status(204).json(artistDeleted);
+  } catch (error) {
+    next(error);
+  }
+});
 
 module.exports = router;
