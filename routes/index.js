@@ -16,52 +16,52 @@ router.get("/private", protectRoute, (req, res, next) => {
 
 //////////////////////////////ARTISTS/////////////////////////////
 
-router.get("/artists", async (req, res, next) => {
-  const allArtists = await Artist.find();
-  res.status(200).json(allArtists);
-});
+// router.get("/artists", async (req, res, next) => {
+//   const allArtists = await Artist.find();
+//   res.status(200).json(allArtists);
+// });
 
 //////////////////////////////CREATIONS/////////////////////////////
 
-router.get("/creations", async (req, res, next) => {
-  const allOrders = await Creation.find();
-  res.status(200).json(allOrders);
-});
+// router.get("/creations", async (req, res, next) => {
+//   const allOrders = await Creation.find();
+//   res.status(200).json(allOrders);
+// });
 
 //////////////////////////////ORDER/////////////////////////////
 
-router.get("/orders", protectRoute, async (req, res, next) => {
-  const allCreations = await Order.find({
-    userId: req.currentUser.id,
-    date: { $exists: true },
-  });
-  res.status(200).json(allCreations);
-});
+// router.get("/orders", protectRoute, async (req, res, next) => {
+//   const allCreations = await Order.find({
+//     userId: req.currentUser.id,
+//     date: { $exists: true },
+//   });
+//   res.status(200).json(allCreations);
+// });
 
 // Create an order if !order
 
-router.post("/order", async (req, res) => {
-  const { userId, creations, amount, date } = req.body;
+// router.post("/order", async (req, res) => {
+//   const { userId, creations, amount, date } = req.body;
 
-  const newOrder = await Order.create({
-    userId,
-    creations,
-    amount,
-    date,
-  });
-  res.status(201).json(newOrder);
-});
+//   const newOrder = await Order.create({
+//     userId,
+//     creations,
+//     amount,
+//     date,
+//   });
+//   res.status(201).json(newOrder);
+// });
 
-// Get an orderCart if order without date exists
+// // Get an orderCart if order without date exists
 
-router.get("/orderCart", protectRoute, async (req, res, next) => {
-  const orderCart = await Order.findOne({
-    userId: req.currentUser.id,
-    date: { $exists: false },
-  });
-  console.log(orderCart);
-  res.status(200).json(orderCart);
-});
+// router.get("/orderCart", protectRoute, async (req, res, next) => {
+//   const orderCart = await Order.findOne({
+//     userId: req.currentUser.id,
+//     date: { $exists: false },
+//   });
+//   console.log(orderCart);
+//   res.status(200).json(orderCart);
+// });
 
 // Add creation to order
 
@@ -80,100 +80,100 @@ router.get("/orderCart", protectRoute, async (req, res, next) => {
 
 //TEST/////////////////////
 
-router.post(
-  "/creations/:id/addtocart",
-  protectRoute,
-  async (req, res, next) => {
-    try {
-      console.log(req.params.id);
-      const order = await Order.findOne({
-        userId: req.currentUser.id,
-        date: { $exists: false },
-      });
-      if (order) {
-        let updated = false;
-        order.creations.forEach((creation) => {
-          if (creation.productId.toString() === req.params.id) {
-            creation.quantity++;
-            updated = true;
-          }
-        });
-        if (!updated) {
-          order.creations.push({
-            productId: req.params.id,
-            quantity: 1,
-          });
-        }
-        await order.save();
-      } else {
-        const newOrder = await Order.create({
-          userId: req.currentUser.id,
-          creations: [
-            {
-              productId: req.params.id,
-              quantity: 1,
-            },
-          ],
-        });
-        return res.status(201).json(newOrder);
-      }
+// router.post(
+//   "/creations/:id/addtocart",
+//   protectRoute,
+//   async (req, res, next) => {
+//     try {
+//       console.log(req.params.id);
+//       const order = await Order.findOne({
+//         userId: req.currentUser.id,
+//         date: { $exists: false },
+//       });
+//       if (order) {
+//         let updated = false;
+//         order.creations.forEach((creation) => {
+//           if (creation.productId.toString() === req.params.id) {
+//             creation.quantity++;
+//             updated = true;
+//           }
+//         });
+//         if (!updated) {
+//           order.creations.push({
+//             productId: req.params.id,
+//             quantity: 1,
+//           });
+//         }
+//         await order.save();
+//       } else {
+//         const newOrder = await Order.create({
+//           userId: req.currentUser.id,
+//           creations: [
+//             {
+//               productId: req.params.id,
+//               quantity: 1,
+//             },
+//           ],
+//         });
+//         return res.status(201).json(newOrder);
+//       }
 
-      res.status(201).json(order);
-    } catch (error) {
-      console.log(error);
-    }
-  }
-);
+//       res.status(201).json(order);
+//     } catch (error) {
+//       console.log(error);
+//     }
+//   }
+// );
 
-// Delete one creation in order
+// // Delete one creation in order
 
-router.patch("/orderCart/:id", protectRoute, async (req, res, next) => {
-  const { id } = req.params;
-  console.log(id);
-  try {
-    const updatedOrder = await Order.findOneAndUpdate(
-      {
-        userId: req.currentUser.id,
-        date: { $exists: false },
-      },
-      {
-        $pull: { creations: { productId: id } },
-      },
-      {
-        new: true,
-      }
-    );
+// router.patch("/orderCart/:id", protectRoute, async (req, res, next) => {
+//   const { id } = req.params;
+//   console.log(id);
+//   try {
+//     const updatedOrder = await Order.findOneAndUpdate(
+//       {
+//         userId: req.currentUser.id,
+//         date: { $exists: false },
+//       },
+//       {
+//         $pull: { creations: { productId: id } },
+//       },
+//       {
+//         new: true,
+//       }
+//     );
 
-    // const creations = [...updatedOrder.creations];
-    // for (let i = 0; i < creations.length; i++) {
-    //   if (creations[i].productId.toString() === id) {
-    //     // let indexOfCreation = updatedOrder.creations.indexOf(creationAdded);
-    //     creations.splice(i, 1);
-    //   }
-    // }
+//     // const creations = [...updatedOrder.creations];
+//     // for (let i = 0; i < creations.length; i++) {
+//     //   if (creations[i].productId.toString() === id) {
+//     //     // let indexOfCreation = updatedOrder.creations.indexOf(creationAdded);
+//     //     creations.splice(i, 1);
+//     //   }
+//     // }
 
-    // // updatedOrder.creations = creations;
-    // const x = await Order.findByIdAndUpdate(updatedOrder.id, { creations });
+//     // // updatedOrder.creations = creations;
+//     // const x = await Order.findByIdAndUpdate(updatedOrder.id, { creations });
 
-    res.status(202).json(updatedOrder);
-  } catch (error) {
-    next(error);
-  }
-});
+//     res.status(202).json(updatedOrder);
+//   } catch (error) {
+//     next(error);
+//   }
+// });
 
-// DELETE THE CART ORDER
+// // DELETE THE CART ORDER
 
-router.delete("/orderCart/delete", protectRoute, async (req, res, next) => {
-  try {
-    let orderDeleted = await Order.findOneAndDelete({
-      userId: req.currentUser.id,
-      date: { $exists: false },
-    });
-    res.status(204).json(orderDeleted);
-  } catch (error) {
-    next(error);
-  }
-});
+// router.delete("/orderCart/delete", protectRoute, async (req, res, next) => {
+//   try {
+//     let orderDeleted = await Order.findOneAndDelete({
+//       userId: req.currentUser.id,
+//       date: { $exists: false },
+//     });
+//     res.status(204).json(orderDeleted);
+//   } catch (error) {
+//     next(error);
+//   }
+// });
 
 // Update quantity
 
@@ -196,83 +196,83 @@ router.delete("/orderCart/delete", protectRoute, async (req, res, next) => {
 
 // Add an amount of creation in cart
 
-router.patch(
-  "/orderCart/increment/:creationId",
-  protectRoute,
-  async (req, res, next) => {
-    try {
-      console.log(req.params.creationId);
-      const order = await Order.findOne({
-        userId: req.currentUser.id,
-        date: { $exists: false },
-      });
-      if (order) {
-        let updated = false;
-        order.creations.forEach((creation) => {
-          if (creation.productId.toString() === req.params.creationId) {
-            creation.quantity++;
-            updated = true;
-          }
-        });
-        await order.save();
-      }
-      res.status(201).json(order);
-    } catch (error) {
-      console.log(error);
-    }
-  }
-);
+// router.patch(
+//   "/orderCart/increment/:creationId",
+//   protectRoute,
+//   async (req, res, next) => {
+//     try {
+//       console.log(req.params.creationId);
+//       const order = await Order.findOne({
+//         userId: req.currentUser.id,
+//         date: { $exists: false },
+//       });
+//       if (order) {
+//         let updated = false;
+//         order.creations.forEach((creation) => {
+//           if (creation.productId.toString() === req.params.creationId) {
+//             creation.quantity++;
+//             updated = true;
+//           }
+//         });
+//         await order.save();
+//       }
+//       res.status(201).json(order);
+//     } catch (error) {
+//       console.log(error);
+//     }
+//   }
+// );
 
-// Remove an amount of creation in cart
+// // Remove an amount of creation in cart
 
-router.patch(
-  "/orderCart/decrement/:creationId",
-  protectRoute,
-  async (req, res, next) => {
-    try {
-      console.log(req.params.creationId);
-      const order = await Order.findOne({
-        userId: req.currentUser.id,
-        date: { $exists: false },
-      });
-      if (order) {
-        let updated = false;
-        order.creations.forEach((creation) => {
-          if (creation.productId.toString() === req.params.creationId) {
-            if (creation.quantity > 0) {
-              creation.quantity--;
-              updated = true;
-            }
-            if (creation.quantity === 0) {
-              order.creations.splice(order.creations.indexOf(creation), 1);
-            }
-          }
-        });
-        await order.save();
-      }
-      res.status(201).json(order);
-    } catch (error) {
-      console.log(error);
-    }
-  }
-);
+// router.patch(
+//   "/orderCart/decrement/:creationId",
+//   protectRoute,
+//   async (req, res, next) => {
+//     try {
+//       console.log(req.params.creationId);
+//       const order = await Order.findOne({
+//         userId: req.currentUser.id,
+//         date: { $exists: false },
+//       });
+//       if (order) {
+//         let updated = false;
+//         order.creations.forEach((creation) => {
+//           if (creation.productId.toString() === req.params.creationId) {
+//             if (creation.quantity > 0) {
+//               creation.quantity--;
+//               updated = true;
+//             }
+//             if (creation.quantity === 0) {
+//               order.creations.splice(order.creations.indexOf(creation), 1);
+//             }
+//           }
+//         });
+//         await order.save();
+//       }
+//       res.status(201).json(order);
+//     } catch (error) {
+//       console.log(error);
+//     }
+//   }
+// );
 
 // Buy a cart
 
-router.put("/orderCart/buy", protectRoute, async (req, res, next) => {
-  console.log("hello");
-  try {
-    const findOrder = await Order.findOne({
-      userId: req.currentUser.id,
-      date: { $exists: false },
-    });
-    findOrder.date = new Date();
-    await findOrder.save();
-    res.status(202).json(findOrder);
-  } catch (error) {
-    console.log(error);
-  }
-});
+// router.put("/orderCart/buy", protectRoute, async (req, res, next) => {
+//   console.log("hello");
+//   try {
+//     const findOrder = await Order.findOne({
+//       userId: req.currentUser.id,
+//       date: { $exists: false },
+//     });
+//     findOrder.date = new Date();
+//     await findOrder.save();
+//     res.status(202).json(findOrder);
+//   } catch (error) {
+//     console.log(error);
+//   }
+// });
 
 //////////////////////////////PROFILE/////////////////////////////
 
@@ -283,78 +283,78 @@ router.put("/orderCart/buy", protectRoute, async (req, res, next) => {
 
 // ROUTE ARTISTE FORM
 
-router.post(
-  "/artists/form",
-  uploader.single("picture"), protectRoute, 
-  async (req, res, next) => {
-    const { name, description, user } = req.body;
-    let picture;
-    if (req.file) {
-      picture = req.file.path;
-    }
+// router.post(
+//   "/artists/form",
+//   uploader.single("picture"), protectRoute, 
+//   async (req, res, next) => {
+//     const { name, description, user } = req.body;
+//     let picture;
+//     if (req.file) {
+//       picture = req.file.path;
+//     }
 
 
-    const artistExists = await Artist.findOne({
-      user: req.currentUser.id,
-    })
+//     const artistExists = await Artist.findOne({
+//       user: req.currentUser.id,
+//     })
 
-    if (artistExists) {
-      console.log("One artist already exists")
-      return res.status(401).json({})
-    }
+//     if (artistExists) {
+//       console.log("One artist already exists")
+//       return res.status(401).json({})
+//     }
 
 
    
-    const artist = await Artist.create({
-      name,
-      description,
-      picture,
-      user: req.currentUser.id,
-    });
+//     const artist = await Artist.create({
+//       name,
+//       description,
+//       picture,
+//       user: req.currentUser.id,
+//     });
 
-    res.status(201).json(artist);
-  }
-);
+//     res.status(201).json(artist);
+//   }
+// );
 
 // ROUTE CREATION FORM
 
-router.post(
-  "/creations/form",
-  uploader.single("img"), protectRoute,
-  async (req, res, next) => {
-    const { title, description, categories, price, user } = req.body;
+// router.post(
+//   "/creations/form",
+//   uploader.single("img"), protectRoute,
+//   async (req, res, next) => {
+//     const { title, description, categories, price, user } = req.body;
 
-    let img;
-    if (req.file) {
-      img = req.file.path;
-    }
+//     let img;
+//     if (req.file) {
+//       img = req.file.path;
+//     }
 
-    const artistLinked = await Artist.findOne({
-      user: req.currentUser.id,
-    })
+//     const artistLinked = await Artist.findOne({
+//       user: req.currentUser.id,
+//     })
 
-    console.log(artistLinked)
+//     console.log(artistLinked)
 
-    if (!artistLinked) {
-      console.log("Create artist page first")
-      return res.status(401).json({})
-    }
+//     if (!artistLinked) {
+//       console.log("Create artist page first")
+//       return res.status(401).json({})
+//     }
 
-    if (artistLinked) {
-    const creation = await Creation.create({
-      title,
-      description,
-      img,
-      categories,
-      price,
-      user: req.currentUser.id,
-      artistId: artistLinked._id
-    })
-    res.status(201).json(creation);
-  }
+//     if (artistLinked) {
+//     const creation = await Creation.create({
+//       title,
+//       description,
+//       img,
+//       categories,
+//       price,
+//       user: req.currentUser.id,
+//       artistId: artistLinked._id
+//     })
+//     res.status(201).json(creation);
+//   }
 
 
-  }
-);
+//   }
+// );
 
 module.exports = router;

@@ -21,8 +21,15 @@ app.use(
 );
 
 app.use("/api", require("./routes/index"));
+app.use("/api", require("./routes/artists"));
+app.use("/api", require("./routes/creations"));
+app.use("/api", require("./routes/orders"));
+
 app.use("/api/auth", require("./routes/auth"));
 
 require("./error-handling/index")(app);
+// require("./error-handling/artists")(app);
+// require("./error-handling/creations")(app);
+
 
 module.exports = app;
