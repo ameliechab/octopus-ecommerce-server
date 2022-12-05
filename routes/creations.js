@@ -114,4 +114,19 @@ console.log(req.params.id)
   
 });
 
+
+//Delete creation of your artist
+// HTTP 204 No Content success status response code indicates that a request has succeeded, but that the client doesn't need to navigate away from its current page
+
+router.delete("/creationinprofile/:id/delete", protectRoute, async (req, res, next) => {
+  try {
+  const myDeletedCreation = await Creation.findOneAndDelete(
+    { _id: req.params.id },
+  );
+  res.status(204).json(myDeletedCreation);
+} catch (error) {
+  next(error);
+}
+});
+
 module.exports = router;
