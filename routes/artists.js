@@ -37,43 +37,9 @@ router.get("/myartist", protectRoute, async (req, res, next) => {
 // If there's no artist page yet  : HTTP 201 Created success status response code indicates that the request has succeeded and has led to the creation of a resource
 
 router.post(
-    "/artists/form",
-    uploader.single("picture"), protectRoute, 
-    async (req, res, next) => {
-      const { name, description, user } = req.body;
-      let picture;
-      if (req.file) {
-        picture = req.file.path;
-      }
-  
-      const artistExists = await Artist.findOne({
-        user: req.currentUser.id,
-      })
-  
-      if (artistExists) {
-        console.log("One artist already exists")
-        return res.status(401).json({})
-      }
-  
-      const artist = await Artist.create({
-        name,
-        description,
-        picture,
-        user: req.currentUser.id,
-      });
-  
-      res.status(201).json(artist);
-    }
-  );
-  
-  
-  
-=======
-// Update an artist
-
-router.patch(
-  "/myArtist/update",
-  uploader.single("picture"), protectRoute, 
+  "/artists/form",
+  uploader.single("picture"),
+  protectRoute,
   async (req, res, next) => {
     const { name, description, user } = req.body;
     let picture;
@@ -83,20 +49,51 @@ router.patch(
 
     const artistExists = await Artist.findOne({
       user: req.currentUser.id,
-    })
+    });
 
-    if (!artistExists) {
-      console.log("No artist created yet")
-      return res.status(401).json({})
+    if (artistExists) {
+      console.log("One artist already exists");
+      return res.status(401).json({});
     }
 
-    const filter = { user: req.currentUser.id, };
-    const update = { name,
-    description,
-    picture};
+    const artist = await Artist.create({
+      name,
+      description,
+      picture,
+      user: req.currentUser.id,
+    });
+
+    res.status(201).json(artist);
+  }
+);
+
+// Update an artist
+
+router.patch(
+  "/myArtist/update",
+  uploader.single("picture"),
+  protectRoute,
+  async (req, res, next) => {
+    const { name, description, user } = req.body;
+    let picture;
+    if (req.file) {
+      picture = req.file.path;
+    }
+
+    const artistExists = await Artist.findOne({
+      user: req.currentUser.id,
+    });
+
+    if (!artistExists) {
+      console.log("No artist created yet");
+      return res.status(401).json({});
+    }
+
+    const filter = { user: req.currentUser.id };
+    const update = { name, description, picture };
 
     let myNewArtist = await Artist.findOneAndUpdate(filter, update, {
-      new: true
+      new: true,
     });
 
     res.status(201).json(myNewArtist);
