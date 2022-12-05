@@ -37,36 +37,36 @@ router.get("/myartist", protectRoute, async (req, res, next) => {
 // If there's no artist page yet  : HTTP 201 Created success status response code indicates that the request has succeeded and has led to the creation of a resource
 
 router.post(
-  "/artists/form",
-  uploader.single("picture"),
-  protectRoute,
-  async (req, res, next) => {
-    const { name, description, user } = req.body;
-    let picture;
-    if (req.file) {
-      picture = req.file.path;
+    "/artists/form",
+    uploader.single("picture"), protectRoute, 
+    async (req, res, next) => {
+      const { name, description, user } = req.body;
+      let picture;
+      if (req.file) {
+        picture = req.file.path;
+      }
+  
+      const artistExists = await Artist.findOne({
+        user: req.currentUser.id,
+      })
+  
+      if (artistExists) {
+        console.log("One artist already exists")
+        return res.status(401).json({})
+      }
+  
+      const artist = await Artist.create({
+        name,
+        description,
+        picture,
+        user: req.currentUser.id,
+      });
+  
+      res.status(201).json(artist);
     }
-
-    const artistExists = await Artist.findOne({
-      user: req.currentUser.id,
-    });
-
-    if (artistExists) {
-      console.log("One artist already exists");
-      return res.status(401).json({});
-    }
-
-    const artist = await Artist.create({
-      name,
-      description,
-      picture,
-      user: req.currentUser.id,
-    });
-
-    res.status(201).json(artist);
-  }
-);
-
+  );
+  
+  
 // Update an artist
 
 router.patch(

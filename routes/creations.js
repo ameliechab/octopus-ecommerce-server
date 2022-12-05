@@ -81,4 +81,37 @@ router.get("/mycreations", protectRoute, async (req, res, next) => {
   res.status(200).json(myCreations);
 });
 
+
+// Update creation
+
+router.patch("/myCreation/:id/update", uploader.single("img"),
+protectRoute,
+async (req, res, next) => {
+  const { title, description, categories, price, user } = req.body;
+console.log(req.params.id)
+  let img;
+  if (req.file) {
+    img = req.file.path;
+  }
+
+  // const filter = { user: req.currentUser.id,
+  //  };
+  const update = { 
+    title,
+      description,
+      img,
+      categories,
+      price,
+  };
+
+  let myNewCreation = await Creation.findByIdAndUpdate(
+    { _id: req.params.id }, 
+    update, 
+    {new: true}
+    );
+    
+    res.status(201).json(myNewCreation);
+  
+});
+
 module.exports = router;
