@@ -25,8 +25,9 @@ router.get("/artists/:id/creations", protectRoute, async (req, res, next) => {
   const someCreations = await Creation.find({
     artistId: req.params.id,
   });
-  console.log(someCreations);
-  res.status(201).json(someCreations);
+  console.log("ARTISTID", req.params.id);
+  console.log("SOME CREATIONS", someCreations);
+  res.status(200).json(someCreations);
 });
 
 // Create a creation
@@ -76,7 +77,7 @@ router.post(
 router.get("/mycreations", protectRoute, async (req, res, next) => {
   const myCreations = await Creation.find({
     user: req.currentUser.id,
-  })
+  });
   res.status(200).json(myCreations);
 });
 

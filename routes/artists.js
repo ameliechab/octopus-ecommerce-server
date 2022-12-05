@@ -71,7 +71,8 @@ router.post(
 
 router.patch(
   "/myArtist/update",
-  uploader.single("picture"), protectRoute, 
+  uploader.single("picture"),
+  protectRoute,
   async (req, res, next) => {
     const { name, description, user } = req.body;
     let picture;
@@ -81,20 +82,18 @@ router.patch(
 
     const artistExists = await Artist.findOne({
       user: req.currentUser.id,
-    })
+    });
 
     if (!artistExists) {
-      console.log("No artist created yet")
-      return res.status(401).json({})
+      console.log("No artist created yet");
+      return res.status(401).json({});
     }
 
-    const filter = { user: req.currentUser.id, };
-    const update = { name,
-    description,
-    picture};
+    const filter = { user: req.currentUser.id };
+    const update = { name, description, picture };
 
     let myNewArtist = await Artist.findOneAndUpdate(filter, update, {
-      new: true
+      new: true,
     });
 
     res.status(201).json(myNewArtist);
