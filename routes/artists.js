@@ -10,8 +10,16 @@ const { set } = require("mongoose");
 // The HTTP 200 OK success status response code indicates that the request has succeeded
 
 router.get("/artists", async (req, res, next) => {
-    const allArtists = await Artist.find();
-    res.status(200).json(allArtists);
+  const allArtists = await Artist.find();
+  res.status(200).json(allArtists);
+});
+
+// Get one artist
+// The HTTP 200 OK success status response code indicates that the request has succeeded
+
+router.get("/artists/:id", async (req, res, next) => {
+  const oneArtist = await Artist.findById(req.params.id);
+  res.status(200).json(oneArtist);
 });
 
 // Get my artist
@@ -57,7 +65,10 @@ router.post(
       res.status(201).json(artist);
     }
   );
-
+  
+  
+  
+=======
 // Update an artist
 
 router.patch(
@@ -91,6 +102,5 @@ router.patch(
     res.status(201).json(myNewArtist);
   }
 );
-
 
 module.exports = router;
