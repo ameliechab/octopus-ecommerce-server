@@ -107,6 +107,9 @@ router.delete("/myArtist/delete", protectRoute, async (req, res, next) => {
     let artistDeleted = await Artist.findOneAndDelete({
       user: req.currentUser.id,
     });
+    let artistsCreationsDeleted = await Creation.deleteMany({ 
+      user: req.currentUser.id,
+    });
     res.status(204).json(artistDeleted);
   } catch (error) {
     next(error);
