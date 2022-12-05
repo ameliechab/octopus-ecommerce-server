@@ -14,6 +14,15 @@ router.get("/artists", async (req, res, next) => {
     res.status(200).json(allArtists);
 });
 
+// Get my artist
+// The HTTP 200 OK success status response code indicates that the request has succeeded
+
+router.get("/myartist", protectRoute, async (req, res, next) => {
+  const myArtist = await Artist.findOne({
+    user: req.currentUser.id,
+  });
+  res.status(200).json(myArtist);
+});
 
 // Create an artist
 // If there's already an artist page : (HTTP) 401 Unauthorized
@@ -48,6 +57,8 @@ router.post(
       res.status(201).json(artist);
     }
   );
+
+
 
 
 module.exports = router;

@@ -14,7 +14,7 @@ router.get("/creations", async (req, res, next) => {
     const allOrders = await Creation.find();
     res.status(200).json(allOrders);
   });
-  
+
 // Create a creation
 // If there's no artist page yet : (HTTP) 401 Unauthorized
 // If there is : HTTP 201 Created success status response code indicates that the request has succeeded and has led to the creation of a resource
@@ -57,5 +57,13 @@ router.post(
   );
 
 
+// Get a creation created with the artist associate
+
+router.get("/creations/update", async (req, res, next) => {
+  const anOrder = await Creation.find({
+    user: req.currentUser.id,
+  }).populate("artistId");
+  res.status(200).json(allOrders);
+});
 
 module.exports = router;
