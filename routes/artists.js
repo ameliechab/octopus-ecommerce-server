@@ -67,8 +67,6 @@ router.post(
   );
   
   
-  
-=======
 // Update an artist
 
 router.patch(
