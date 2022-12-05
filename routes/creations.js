@@ -57,13 +57,13 @@ router.post(
   );
 
 
-// Get a creation created with the artist associate
+// Get creations created with the current user id
 
-router.get("/creations/update", async (req, res, next) => {
-  const anOrder = await Creation.find({
+router.get("/mycreations", protectRoute, async (req, res, next) => {
+  const myCreations = await Creation.find({
     user: req.currentUser.id,
-  }).populate("artistId");
-  res.status(200).json(allOrders);
+  })
+  res.status(200).json(myCreations);
 });
 
 module.exports = router;
