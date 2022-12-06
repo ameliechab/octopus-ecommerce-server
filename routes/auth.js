@@ -13,8 +13,8 @@ const saltRounds = 10;
  */
 
 router.post("/signup", async (req, res, next) => {
-  const { name, email, password } = req.body;
-  if (email === "" || name === "" || password === "") {
+  const { name, email, password, isArtist } = req.body;
+  if (email === "" || name === "" || password === "" ) {
     res
       .status(400)
       .json({ message: "I need some informations to work with here!" });
@@ -48,6 +48,7 @@ router.post("/signup", async (req, res, next) => {
       name,
       email,
       password: hashedPass,
+      isArtist,
     });
 
     const user = createdUser.toObject();
