@@ -50,7 +50,6 @@ router.post(
   uploader.single("img"),
   protectRoute, isArtist,
   async (req, res, next) => {
-    try {
     const { title, description, categories, price, user } = req.body;
     let img;
     if (req.file) {
@@ -66,7 +65,16 @@ router.post(
       return res.status(401).json({});
     }
 
+    try {
+
     if (artistLinked) {
+
+      for (const key in req.body) {
+        if (!req.body[key] || req.body[key] === 'undefined') {
+          return res.status(400).json({message:"All field required"})
+        }
+      }
+
       const creation = await Creation.create({
         title,
         description,
