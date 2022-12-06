@@ -51,6 +51,12 @@ router.post(
   protectRoute,
   async (req, res, next) => {
     try {
+      // const isAnArtistCreation = await Creation.findOne({
+      //   _id: req.params.id
+      // });
+      // if (isAnArtistCreation.user === req.currentUser.id) {
+      //   res.status(403).json("it is your creation !");
+      // }
       console.log(req.params.id);
       const order = await Order.findOne({
         userId: req.currentUser.id,

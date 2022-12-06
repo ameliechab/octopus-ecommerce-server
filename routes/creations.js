@@ -5,6 +5,7 @@ const Artist = require("../models/Artist.model");
 const Creation = require("../models/Creation.model");
 const Order = require("../models/Order.model");
 const { set } = require("mongoose");
+const isArtist = require("../middlewares/isArtist");
 
 // Get all creations
 // The HTTP 200 OK success status response code indicates that the request has succeeded
@@ -37,7 +38,7 @@ router.get("/artists/:id/creations", protectRoute, async (req, res, next) => {
 router.post(
   "/creations/form",
   uploader.single("img"),
-  protectRoute,
+  protectRoute, isArtist,
   async (req, res, next) => {
     const { title, description, categories, price, user } = req.body;
 
@@ -74,7 +75,7 @@ router.post(
 
 // Get creations created with the current user id
 
-router.get("/mycreations", protectRoute, async (req, res, next) => {
+router.get("/mycreations", protectRoute, isArtist, async (req, res, next) => {
   const myCreations = await Creation.find({
     user: req.currentUser.id,
   });
@@ -85,7 +86,7 @@ router.get("/mycreations", protectRoute, async (req, res, next) => {
 // Update creation
 
 router.patch("/myCreation/:id/update", uploader.single("img"),
-protectRoute,
+protectRoute, isArtist,
 async (req, res, next) => {
   const { title, description, categories, price, user } = req.body;
 console.log(req.params.id)
@@ -118,7 +119,7 @@ console.log(req.params.id)
 //Delete creation of your artist
 // HTTP 204 No Content success status response code indicates that a request has succeeded, but that the client doesn't need to navigate away from its current page
 
-router.delete("/creationinprofile/:id/delete", protectRoute, async (req, res, next) => {
+router.delete("/creationinprofile/:id/delete", protectRoute, isArtist, async (req, res, next) => {
   try {
   const myDeletedCreation = await Creation.findOneAndDelete(
     { _id: req.params.id },

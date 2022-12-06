@@ -4,7 +4,7 @@ const uploader = require("../config/cloudinary");
 const Artist = require("../models/Artist.model");
 const Creation = require("../models/Creation.model");
 const Order = require("../models/Order.model");
-const { set } = require("mongoose");
+const isArtist = require("../middlewares/isArtist");
 
 // Get all artists
 // The HTTP 200 OK success status response code indicates that the request has succeeded
@@ -25,7 +25,7 @@ router.get("/artists/:id", async (req, res, next) => {
 // Get my artist
 // The HTTP 200 OK success status response code indicates that the request has succeeded
 
-router.get("/myartist", protectRoute, async (req, res, next) => {
+router.get("/myartist", protectRoute, isArtist, async (req, res, next) => {
   const myArtist = await Artist.findOne({
     user: req.currentUser.id,
   });
@@ -39,7 +39,7 @@ router.get("/myartist", protectRoute, async (req, res, next) => {
 router.post(
   "/artists/form",
   uploader.single("picture"),
-  protectRoute,
+  protectRoute, isArtist,
   async (req, res, next) => {
     const { name, description, user } = req.body;
     let picture;
@@ -72,7 +72,7 @@ router.post(
 router.patch(
   "/myArtist/update",
   uploader.single("picture"),
-  protectRoute,
+  protectRoute, isArtist,
   async (req, res, next) => {
     const { name, description, user } = req.body;
     let picture;
@@ -102,7 +102,7 @@ router.patch(
 
 // Delete an artist
 
-router.delete("/myArtist/delete", protectRoute, async (req, res, next) => {
+router.delete("/myArtist/delete", protectRoute, isArtist, async (req, res, next) => {
   try {
     let artistDeleted = await Artist.findOneAndDelete({
       user: req.currentUser.id,
