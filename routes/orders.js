@@ -1,32 +1,36 @@
 const router = require("express").Router();
 const protectRoute = require("../middlewares/protectRoute");
-const uploader = require("../config/cloudinary");
-const Artist = require("../models/Artist.model");
-const Creation = require("../models/Creation.model");
 const Order = require("../models/Order.model");
-const { set } = require("mongoose");
 
 // Get all orders of current user
 // The HTTP 200 OK success status response code indicates that the request has succeeded
 
 router.get("/orders", protectRoute, async (req, res, next) => {
+  try {
   const allCreations = await Order.find({
     userId: req.currentUser.id,
     date: { $exists: true },
   });
   res.status(200).json(allCreations);
+} catch(error) {
+  next(error)
+}
 });
 
 // Get an orderCart if order without date exists
 // The HTTP 200 OK success status response code indicates that the request has succeeded
 
 router.get("/orderCart", protectRoute, async (req, res, next) => {
+  try {
   const orderCart = await Order.findOne({
     userId: req.currentUser.id,
     date: { $exists: false },
   });
   console.log(orderCart);
   res.status(200).json(orderCart);
+} catch(error) {
+  next(error)
+}
 });
 
 // Create an order if !order
