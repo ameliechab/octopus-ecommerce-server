@@ -1,10 +1,5 @@
 const router = require("express").Router();
 const protectRoute = require("../middlewares/protectRoute");
-const uploader = require("../config/cloudinary");
-const Artist = require("../models/Artist.model");
-const Creation = require("../models/Creation.model");
-const Order = require("../models/Order.model");
-const { set } = require("mongoose");
 
 router.get("/", (req, res, next) => {
   res.send("Server is running... 🏃‍♂️");
