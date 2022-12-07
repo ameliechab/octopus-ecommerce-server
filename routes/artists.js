@@ -91,6 +91,8 @@ router.post(
 );
 
 // Update an artist
+// (HTTP) 401 Unauthorized
+// HTTP 201 Created success status response code indicates that the request has succeeded and has led to the creation of a resource
 
 router.patch(
   "/myArtist/update",

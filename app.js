@@ -8,7 +8,7 @@ const cors = require("cors");
 
 const app = express();
 
-//? Services like render use something called a proxy and you need to add this to your server
+// add proxy to server
 app.set("trust proxy", 1);
 app.use(logger("dev"));
 app.use(express.json());
@@ -28,8 +28,7 @@ app.use("/api", require("./routes/orders"));
 app.use("/api/auth", require("./routes/auth"));
 
 require("./error-handling/index")(app);
-// require("./error-handling/artists")(app);
-// require("./error-handling/creations")(app);
+
 
 
 module.exports = app;
