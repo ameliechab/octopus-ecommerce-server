@@ -28,7 +28,7 @@ router.get("/creations/:id", async (req, res, next) => {
 });
 
 //Get creations of one artist
-router.get("/artists/:id/creations", protectRoute, async (req, res, next) => {
+router.get("/artists/:id/creations", async (req, res, next) => {
   try {
   const someCreations = await Creation.find({
     artistId: req.params.id,
