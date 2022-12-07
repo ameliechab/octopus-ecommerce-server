@@ -4,7 +4,7 @@ const isArtist = (req, res, next) => {
     if (isArtist === true) {
         return next();
     } else {
-        return res.status(404).render('not-found'); // 404 over 403 to prevent information leak 
+        return res.status(404).render('not-found'); 
     };
 };
 
