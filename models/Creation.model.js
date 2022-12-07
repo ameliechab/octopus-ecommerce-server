@@ -18,7 +18,6 @@ const CreationSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Artist",
       },
-    // inStock: { type: Boolean, default: true },
   },
   { timestamps: true }
 );

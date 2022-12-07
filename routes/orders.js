@@ -33,20 +33,6 @@ router.get("/orderCart", protectRoute, async (req, res, next) => {
 }
 });
 
-// Create an order if !order
-// HTTP 201 Created success status response code indicates that the request has succeeded and has led to the creation of a resource
-// router.post("/order", async (req, res) => {
-//     const { userId, creations, amount, date } = req.body;
-
-//     const newOrder = await Order.create({
-//       userId,
-//       creations,
-//       amount,
-//       date,
-//     });
-//     res.status(201).json(newOrder);
-// });
-
 // Add one creation to OrderCart
 // HTTP 201 Created success status response code indicates that the request has succeeded and has led to the creation of a resource
 
@@ -55,12 +41,6 @@ router.post(
   protectRoute,
   async (req, res, next) => {
     try {
-      // const isAnArtistCreation = await Creation.findOne({
-      //   _id: req.params.id
-      // });
-      // if (isAnArtistCreation.user === req.currentUser.id) {
-      //   res.status(403).json("it is your creation !");
-      // }
       console.log(req.params.id);
       const order = await Order.findOne({
         userId: req.currentUser.id,
