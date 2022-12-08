@@ -18,6 +18,8 @@ router.get("/creations", async (req, res, next) => {
 });
 
 // Get one creation
+// The HTTP 200 OK success status response code indicates that the request has succeeded
+
 router.get("/creations/:id", async (req, res, next) => {
   try {
   const oneCreation = await Creation.findById(req.params.id);
@@ -28,13 +30,13 @@ router.get("/creations/:id", async (req, res, next) => {
 });
 
 //Get creations of one artist
+// The HTTP 200 OK success status response code indicates that the request has succeeded
+
 router.get("/artists/:id/creations", async (req, res, next) => {
   try {
   const someCreations = await Creation.find({
     artistId: req.params.id,
   });
-  console.log("ARTISTID", req.params.id);
-  console.log("SOME CREATIONS", someCreations);
   res.status(200).json(someCreations);
 } catch(error) {
   next(error)
@@ -50,23 +52,24 @@ router.post(
   uploader.single("img"),
   protectRoute, isArtist,
   async (req, res, next) => {
+    // Check the request body of the front
     const { title, description, categories, price, user } = req.body;
     let img;
     if (req.file) {
       img = req.file.path;
     }
+    // Find the artist connected thanks to the user id
     const artistLinked = await Artist.findOne({
       user: req.currentUser.id,
     });
-    console.log(artistLinked);
-
+    // if there is no artist page for the current user it can't create a creation
     if (!artistLinked) {
       console.log("Create artist page first");
       return res.status(401).json({});
     }
 
     try {
-
+  // if there is an artist linked to the current user and all field are field, the creation is created
     if (artistLinked) {
 
       for (const key in req.body) {
@@ -93,6 +96,7 @@ router.post(
 );
 
 // Get creations created with the current user id
+// The HTTP 200 OK success status response code indicates that the request has succeeded
 
 router.get("/mycreations", protectRoute, isArtist, async (req, res, next) => {
   try {
@@ -108,6 +112,7 @@ router.get("/mycreations", protectRoute, isArtist, async (req, res, next) => {
 
 
 // Update creation
+// If there is : HTTP 201 Created success status response code indicates that the request has succeeded and has led to the creation of a resource
 
 router.patch("/myCreation/:id/update", uploader.single("img"),
 protectRoute, isArtist,
@@ -120,6 +125,7 @@ async (req, res, next) => {
     img = req.file.path;
   }
 
+  // all fields of the updated part
   const update = { 
     title,
       description,

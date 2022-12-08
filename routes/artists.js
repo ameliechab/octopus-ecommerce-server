@@ -44,8 +44,6 @@ router.get("/myartist", protectRoute, isArtist, async (req, res, next) => {
 });
 
 // Create an artist
-// If there's already an artist page : (HTTP) 401 Unauthorized
-// If there's no artist page yet  : HTTP 201 Created success status response code indicates that the request has succeeded and has led to the creation of a resource
 
 router.post(
   "/artists/form",
@@ -53,35 +51,35 @@ router.post(
   protectRoute, isArtist,
   async (req, res, next) => {
     const { name, description, user } = req.body;
-    console.log(req.body)
+    
     let picture;
     if (req.file) {
       picture = req.file.path;
     }
-
+// check if the current user has an artist page already
     const artistExists = await Artist.findOne({
       user: req.currentUser.id,
     });
-
+//  if the current user has an artist page already it can't create a new one : (HTTP) 401 Unauthorized
     if (artistExists) {
       console.log("One artist already exists");
       return res.status(401).json({message: 'One artist already exist'});
     }
   try {
-
+// check if the user as put somathing in all the field
     for (const key in req.body) {
       if (!req.body[key] || req.body[key] === 'undefined') {
         return res.status(400).json({message:"All field required"})
       }
     }
-    
+// create a new artist
     const artist = await Artist.create({
       name,
       description,
       picture,
       user: req.currentUser.id,
     });
-
+// If there's no artist page yet  : HTTP 201 Created success status response code indicates that the request has succeeded and has led to the creation of a resource
     res.status(201).json(artist);
   }
   catch(error) {
@@ -104,16 +102,16 @@ router.patch(
     if (req.file) {
       picture = req.file.path;
     }
-
+// check if an artist page exists for the current user
     const artistExists = await Artist.findOne({
       user: req.currentUser.id,
     });
-
+// if there is no artist page the user can't update 
     if (!artistExists) {
       console.log("No artist created yet");
       return res.status(401).json({});
     }
-
+// Find the artist page with the user id and update it
     try {
     const filter = { user: req.currentUser.id };
     const update = { name, description, picture };
@@ -127,21 +125,22 @@ router.patch(
     catch(error) {
       next(error)
     }
-
-
   }
 );
 
-// Delete an artist
+// Find the artists page with the current user id and Delete an artist
 
 router.delete("/myArtist/delete", protectRoute, isArtist, async (req, res, next) => {
   try {
     let artistDeleted = await Artist.findOneAndDelete({
       user: req.currentUser.id,
     });
+
+    // delete all the creations related to the artist page just deleted
     let artistsCreationsDeleted = await Creation.deleteMany({ 
       user: req.currentUser.id,
     });
+    // HTTP 204 No Content
     res.status(204).json(artistDeleted);
   } catch (error) {
     next(error);

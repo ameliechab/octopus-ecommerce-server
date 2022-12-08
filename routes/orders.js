@@ -26,7 +26,7 @@ router.get("/orderCart", protectRoute, async (req, res, next) => {
     userId: req.currentUser.id,
     date: { $exists: false },
   });
-  console.log(orderCart);
+  
   res.status(200).json(orderCart);
 } catch(error) {
   next(error)
@@ -41,11 +41,13 @@ router.post(
   protectRoute,
   async (req, res, next) => {
     try {
-      console.log(req.params.id);
+      
       const order = await Order.findOne({
         userId: req.currentUser.id,
         date: { $exists: false },
       });
+
+      // if an order without date has been find, the user already has a cart ! 
       if (order) {
         let updated = false;
         order.creations.forEach((creation) => {
@@ -61,6 +63,8 @@ router.post(
           });
         }
         await order.save();
+
+        // if the current user does not have an order without date we create one
       } else {
         const newOrder = await Order.create({
           userId: req.currentUser.id,
@@ -86,7 +90,7 @@ router.post(
 
 router.patch("/orderCart/:id", protectRoute, async (req, res, next) => {
   const { id } = req.params;
-  console.log(id);
+  
   try {
     const updatedOrder = await Order.findOneAndUpdate(
       {
@@ -129,7 +133,7 @@ router.patch(
   protectRoute,
   async (req, res, next) => {
     try {
-      console.log(req.params.creationId);
+      // search for an order without date
       const order = await Order.findOne({
         userId: req.currentUser.id,
         date: { $exists: false },
@@ -159,7 +163,7 @@ router.patch(
   protectRoute,
   async (req, res, next) => {
     try {
-      console.log(req.params.creationId);
+      
       const order = await Order.findOne({
         userId: req.currentUser.id,
         date: { $exists: false },

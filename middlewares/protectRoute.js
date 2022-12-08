@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 
 const protectRoute = (req, res, next) => {
   const header = req.headers["authorization"];
-  console.log(header);
+  
   if (typeof header !== "undefined") {
     const bearer = header.split(" ");
     const token = bearer[1];
@@ -15,7 +15,7 @@ const protectRoute = (req, res, next) => {
         res.sendStatus(401);
       } else {
         //If token is successfully verified, we can enter in the next route
-        console.log(authorizedData);
+    
         const currentUser = await User.findById(authorizedData.id, {
           password: 0,
         });

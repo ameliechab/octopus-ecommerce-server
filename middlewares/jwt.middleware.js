@@ -1,5 +1,5 @@
 const jwt = require("express-jwt")
-
+// check if the current user is authenticated
 const isAuthenticated = jwt({
 	secret: process.env.TOKEN_SECRET,
 	algorithms: ["HS256"],
