@@ -10,7 +10,7 @@ Made in 10 days in November and December 2022 during Web Dev Bootcamp Ironhack.
 
 ## Why did we chose an e commerce ?
 
-It seemed to be a really often used type of website in our everyday life.
+It seemed to be a really often used type of website in our everyday life. E-commerce can be full of features and represent a good way to do a complete full stack app in order to master the use of React.
 
 ## This is a MERN stack application
 
