@@ -25,7 +25,7 @@ router.get("/orderCart", protectRoute, async (req, res, next) => {
   const orderCart = await Order.findOne({
     userId: req.currentUser.id,
     date: { $exists: false },
-  });
+  }).populate('creations.productId')
   
   res.status(200).json(orderCart);
 } catch(error) {
