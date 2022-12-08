@@ -37,4 +37,4 @@ MONGODB_URI=?
 
 ## [Link to OCTOPUS E Commerce](https://octopus-ecommerce.netlify.app/)
 
-![My Remote Image](https://res.cloudinary.com/dsioshcio/image/upload/v1670435660/Screenshot_2022-12-05_at_20.28.28_rndwtd.png)
+![My Remote Image](https://res.cloudinary.com/dzkbycvev/image/upload/v1670516711/preview-octopus_z5xrwt.png)
