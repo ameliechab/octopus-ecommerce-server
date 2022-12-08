@@ -103,7 +103,7 @@ router.patch("/orderCart/:id", protectRoute, async (req, res, next) => {
       {
         new: true,
       }
-    );
+    ).populate("creations.productId")
 
     res.status(202).json(updatedOrder);
   } catch (error) {
