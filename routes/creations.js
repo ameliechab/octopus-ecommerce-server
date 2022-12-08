@@ -114,16 +114,12 @@ protectRoute, isArtist,
 async (req, res, next) => {
   try {
 
-  const { title, description, categories, price, user } = req.body;
-console.log(req.params.id)
+  const { title, description, categories, price } = req.body;
   let img;
   if (req.file) {
     img = req.file.path;
   }
 
-
-  // const filter = { user: req.currentUser.id,
-  //  };
   const update = { 
     title,
       description,
